@@ -49,7 +49,7 @@ A premium, full-stack investment portfolio tracker featuring a robust Flask REST
 2. **Create and Activate Virtual Environment**:
    ```bash
    python3 -m venv .
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source ./bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install Dependencies**:
