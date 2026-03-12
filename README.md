@@ -54,7 +54,7 @@ A premium, full-stack investment portfolio tracker featuring a robust Flask REST
 
 3. **Install Dependencies**:
    ```bash
-   pip install Flask PyJWT bcrypt
+   pip install Flask PyJWT bcrypt flask-cors
    ```
 
 ### 3. Running the Application
