@@ -1,124 +1,95 @@
-# Dividend Tracker API (div-api)
+# Div-API Portfolio Tracker
 
-A REST API built with Flask for tracking personal investment portfolios and dividend income. It features JWT-based authentication, account management, and database support via SQLite.
+A premium, full-stack investment portfolio tracker featuring a robust Flask REST API and a modern glassmorphism frontend. Track your holdings, transactions, and dividends with a sleek, interactive interface.
 
-## Features
+![Design Preview](https://img.shields.io/badge/Design-Premium_Dark-blueviolet)
+![Currency](https://img.shields.io/badge/Currency-PLN_(zł)-green)
 
-- **User Authentication:** Registration and login using securely hashed passwords (`bcrypt`) and JWT tokens.
-- **Account Management:** Users can manage multiple investment accounts.
-- **Holdings Tracking:** Record and track stock holdings (company symbol / "spółka", purchase date, quantity, price) across accounts.
-- **Dividend Tracking:** Record received dividends per account and per company.
-- **Data Isolation:** All portfolio data (accounts, holdings, dividends) is securely isolated per user.
+## 🌟 Features
 
-## Tech Stack
+- **Modern Dashboard**: High-level overview of your current holdings with real-time value calculation.
+- **Dedicated Views**: 
+    - **📊 Dashboard**: Portfolio summary and current holdings.
+    - **📋 Transactions**: Full history of BUY/SELL actions.
+    - **💰 Dividends**: Record and track your passive income.
+- **Interactive Tables**: Powered by **DataTables.js**, allowing for seamless sorting, instant searching, and pagination.
+- **Multi-Account Support**: Manage multiple brokerage or bank accounts under one profile.
+- **Automatic Holding Management**: Recording a transaction automatically updates your holdings and calculates average costs.
+- **Premium Aesthetics**: A stunning dark-mode interface with glassmorphism effects, smooth transitions, and a responsive layout.
+- **Secure Authentication**: JWT-based login and registration system.
 
-- **Python 3**
-- **Flask** - Web Framework
-- **SQLite3** - Relational Database
-- **PyJWT** - Authentication (JSON Web Tokens)
-- **bcrypt** - Password Hashing
+## 🛠 Tech Stack
 
-## Installation & Setup
+### Backend
+- **Python / Flask**: Core framework.
+- **SQLite3**: Relational database for persistent storage.
+- **PyJWT**: Secure authentication tokens.
+- **bcrypt**: Industrial-grade password hashing.
 
-1. **Navigate to the project directory:**
+### Frontend
+- **Flask (Frontend App)**: Acts as a web server for the UI.
+- **Vanilla CSS**: Custom premium styling and design system.
+- **JavaScript / jQuery**: Interactive elements and API integration.
+- **DataTables.js**: Advanced data grid features.
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Python 3.x
+- Git
+
+### 2. Setup
+
+1. **Clone the project (Dev branch)**:
    ```bash
-   cd path/to/div-api
+   git clone -b dev-dtbl https://github.com/kc59czk/div-api.git
+   cd div-api
    ```
 
-2. **Create and activate a virtual environment (optional but recommended):**
+2. **Create and Activate Virtual Environment**:
    ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
+   python3 -m venv .
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. **Install the required dependencies:**
-   *(Ensure you have Flask, PyJWT, and bcrypt installed)*
+3. **Install Dependencies**:
    ```bash
    pip install Flask PyJWT bcrypt
    ```
 
-4. **Initialize the database:**
-   The application uses an SQLite database stored in `instance/portfolio.db`. The easiest way to initialize it is to temporarily uncomment the `init_db()` line at the bottom of `app.py`:
-   ```python
-   if __name__ == "__main__":
-       init_db()  # <-- uncomment ONLY the first time
-       app.run(debug=True)
-   ```
-   After running it once, you can comment it back out.
+### 3. Running the Application
 
-5. **Run the application:**
-   ```bash
-   python3 app.py
-   ```
-   The API will be available at `http://127.0.0.1:5000`.
+This is a two-part application. You need to run both the API and the Frontend.
 
-## API Endpoints Reference
-
-### Authentication
-
-*The endpoints below are public.*
-
-* `POST /auth/register`
-  * Body: `{"username": "...", "email": "...", "password": "..."}`
-  * Description: Registers a new user.
-* `POST /auth/login`
-  * Body: `{"username": "...", "password": "..."}`
-  * Description: Authenticates the user and returns an `access_token`.
-
----
-
-**Note:** All of the following endpoints require an `Authorization` header containing the valid JWT token:
-```
-Authorization: Bearer <your_access_token>
-```
-
-### Accounts
-
-* `GET /accounts` 
-  * Description: Retrieve a list of all accounts for the authenticated user.
-* `POST /accounts` 
-  * Body: `{"name": "Broker A"}`
-  * Description: Create a new account under the authenticated user.
-* `DELETE /accounts/<int:account_id>`
-  * Description: Delete a specific account.
-
-### Holdings
-
-* `GET /holdings` 
-  * URL Parameters (optional): `?account_id=<id>&spolka=<symbol>`
-  * Description: List holdings. Filters can be applied by account ID or company.
-* `POST /holdings`
-  * Body: `{"account_id": 1, "spolka": "AAPL", "data": "2023-01-01", "quantity": 10, "price": 150.0}`
-  * Description: Record a new stock holding directly (Note: consider using `/transactions` instead to automatically update holdings).
-* `DELETE /holdings/<int:holding_id>`
-  * Description: Delete a specific holding.
-
-### Transactions
-
-* `GET /transactions`
-  * URL Parameters (optional): `?account_id=<id>&spolka=<symbol>`
-  * Description: List recorded transactions. Filters can be applied by account ID or company.
-* `POST /transactions`
-  * Body: `{"account_id": 1, "spolka": "AAPL", "type": "BUY", "data": "2023-01-01", "quantity": 10, "price": 150.0}`
-  * Description: Record a transaction (`BUY` or `SELL`). This will automatically create or update the corresponding entry in the `holdings` table.
-* `DELETE /transactions/<int:transaction_id>`
-  * Description: Delete a specific transaction. This will attempt to reverse the transaction's effect on the `holdings` table.
-
-### Dividends
-
-* `GET /dividends`
-  * URL Parameters (optional): `?account_id=<id>&spolka=<symbol>`
-  * Description: List recorded dividends. Filters can be applied by account ID or company.
-* `POST /dividends`
-  * Body: `{"account_id": 1, "spolka": "AAPL", "data": "2023-06-01", "amount": 15.50}`
-  * Description: Record a new dividend payout.
-* `DELETE /dividends/<int:dividend_id>`
-  * Description: Delete a specific dividend record.
-
-## Configuration
-
-In a production environment, be sure to set the `SECRET_KEY` environment variable to a secure, random string (rather than using the hardcoded default).
-
+**A. Start the Backend API (Port 5000)**
 ```bash
-export SECRET_KEY="your_super_secure_random_string"
+python app.py
 ```
+*Note: The first time you run this, it will initialize the `instance/portfolio.db` database.*
+
+**B. Start the Frontend UI (Port 5050)**
+```bash
+cd frontend
+python app.py
+```
+
+### 4. Access
+Open your browser and navigate to:
+`http://127.0.0.1:5050`
+
+## 📁 Project Structure
+
+```text
+div-api/
+├── app.py              # Backend API server
+├── schema.sql          # Database schema
+├── frontend/
+│   ├── app.py          # Frontend web server
+│   ├── static/         # CSS, JS, and Assets
+│   └── templates/      # HTML templates (Jinja2)
+└── instance/           # SQLite database location
+```
+
+## ⚖️ License
+
+MIT

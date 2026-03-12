@@ -17,3 +17,4 @@ lib64/
 include/
 pyvenv.cfg
 .env
+*-ORIG
