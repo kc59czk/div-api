@@ -5,6 +5,7 @@ import bcrypt
 import datetime
 from functools import wraps
 from flask import Flask, request, jsonify, g
+from flask_cors import CORS
 import os
 
 # Configuration
@@ -12,6 +13,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-change-in-prod")
 DATABASE = os.path.join("instance", "portfolio.db")
 
 app = Flask(__name__)
+CORS(app) # Enable CORS for all routes
 app.config["SECRET_KEY"] = SECRET_KEY
 
 # Ensure instance folder exists
@@ -52,7 +54,10 @@ def generate_token(user_id):
         "user_id": user_id,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)
     }
-    return jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
+    encoded = jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
+    if isinstance(encoded, bytes):
+        return encoded.decode("utf-8")
+    return encoded
 
 def token_required(f):
     @wraps(f)

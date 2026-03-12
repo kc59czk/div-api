@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Div-API Portfolio{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Div-API</h2>
+                <p>Portfolio Tracker</p>
+            </div>
+            
+            <ul class="nav-links" id="nav-menu" style="display: none;">
+                <li><a href="/" class="{{ 'active' if request.path == '/' else '' }}"><i class="icon">📊</i> Dashboard</a></li>
+                <li><a href="/transactions" class="{{ 'active' if request.path == '/transactions' else '' }}"><i class="icon">📋</i> Transactions</a></li>
+                <li><a href="/dividends" class="{{ 'active' if request.path == '/dividends' else '' }}"><i class="icon">💰</i> Dividends</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-secondary" style="display: none;">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <h1 id="page-title">{% block page_heading %}Dashboard{% endblock %}</h1>
+                <div class="user-info" id="user-info" style="display: none;">
+                    <span class="avatar">U</span>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Notifications Area -->
+                <div id="notification-area"></div>
+                
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- The core Javascript that interacts with the backend -->
+    <script src="{{ url_for('static', filename='api.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

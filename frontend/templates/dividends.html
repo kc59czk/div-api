@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Dividends - Div-API Portfolio{% endblock %}
+{% block page_heading %}Dividends{% endblock %}
+
+{% block content %}
+<div id="dashboard-content" style="display: none;">
+
+    <!-- Account Selection Area -->
+    <div class="card mb-2">
+        <div class="card-header flex-between">
+            <h2>Your Accounts</h2>
+            <button id="btn-new-account" class="btn btn-primary btn-sm">+ New Account</button>
+        </div>
+        <div class="card-body">
+            <select id="account-select" class="form-control">
+                <option value="">Select an account...</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Dividends Panel -->
+    <div class="card" id="dividends-panel" style="display: none;">
+        <div class="card-header flex-between">
+            <h2>Dividends</h2>
+            <button id="btn-new-dividend" class="btn btn-secondary btn-sm">+ Record Dividend</button>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table" id="dividends-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Symbol</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Account Modal -->
+<div id="modal-account" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Create New Account</h2>
+        <form id="form-account">
+            <div class="form-group">
+                <label>Account Name</label>
+                <input type="text" id="input-account-name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+    </div>
+</div>
+
+<!-- New Dividend Modal -->
+<div id="modal-dividend" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Record Dividend</h2>
+        <form id="form-dividend">
+            <div class="form-group">
+                <label>Symbol</label>
+                <input type="text" id="input-div-symbol" required style="text-transform: uppercase">
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="input-div-date" required>
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="input-div-amount" step="0.01" min="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Dividend</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

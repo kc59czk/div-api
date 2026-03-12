@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Div-API Portfolio{% endblock %}
+{% block page_heading %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="dashboard-content" style="display: none;">
+    
+    <!-- Account Selection Area -->
+    <div class="card mb-2">
+        <div class="card-header flex-between">
+            <h2>Your Accounts</h2>
+            <button id="btn-new-account" class="btn btn-primary btn-sm">+ New Account</button>
+        </div>
+        <div class="card-body">
+            <select id="account-select" class="form-control">
+                <option value="">Select an account...</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Grid — Holdings only -->
+    <div class="dashboard-grid" id="main-panels" style="display: none;">
+        
+        <!-- Holdings Panel -->
+        <div class="card" id="holdings-panel" style="grid-column: 1 / -1;">
+            <div class="card-header">
+                <h2>Current Holdings</h2>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table" id="holdings-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Shares</th>
+                                <th>Avg Cost</th>
+                                <th>Total Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- New Account Modal -->
+<div id="modal-account" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Create New Account</h2>
+        <form id="form-account">
+            <div class="form-group">
+                <label>Account Name</label>
+                <input type="text" id="input-account-name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

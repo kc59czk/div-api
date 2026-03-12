@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Div-API Portfolio{% endblock %}
+{% block page_heading %}Welcome Back{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card" id="login-card">
+        <h2>Login to your account</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </form>
+        <p class="auth-switch">Don't have an account? <a href="#" id="show-register">Register here</a></p>
+    </div>
+
+    <div class="auth-card" id="register-card" style="display: none;">
+        <h2>Create an account</h2>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" required autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="#" id="show-login">Login here</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Toggle between login and register forms
+    document.getElementById('show-register').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('login-card').style.display = 'none';
+        document.getElementById('register-card').style.display = 'block';
+    });
+
+    document.getElementById('show-login').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('register-card').style.display = 'none';
+        document.getElementById('login-card').style.display = 'block';
+    });
+</script>
+{% endblock %}
