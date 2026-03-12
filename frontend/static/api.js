@@ -5,6 +5,9 @@ let authToken = localStorage.getItem("divapi_token");
 let currentUserId = localStorage.getItem("divapi_user_id");
 let accounts = [];
 let currentAccountId = null;
+let dtHoldings = null;
+let dtTransactions = null;
+let dtDividends = null;
 
 // --- DOM Elements ---
 const el = {
@@ -164,6 +167,10 @@ function changeAccount() {
         if(el.mainPanels) el.mainPanels.style.display = 'none';
         if(el.transactionsPanel) el.transactionsPanel.style.display = 'none';
         if(el.dividendsPanel) el.dividendsPanel.style.display = 'none';
+        // Clear tables
+        if(dtHoldings) dtHoldings.clear().draw();
+        if(dtTransactions) dtTransactions.clear().draw();
+        if(dtDividends) dtDividends.clear().draw();
     }
 }
 
@@ -177,75 +184,76 @@ function renderAccountSelect() {
 }
 
 function renderHoldings(holdings) {
-    if(!el.holdingsTableBody) return;
-    el.holdingsTableBody.innerHTML = '';
+    if(!document.getElementById('holdings-table')) return;
     
-    if (holdings.length === 0) {
-        el.holdingsTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No holdings found</td></tr>';
-        return;
+    if (!dtHoldings) {
+        dtHoldings = $('#holdings-table').DataTable({
+            pageLength: 10,
+            order: [[0, 'asc']],
+            language: { emptyTable: "No holdings found" }
+        });
     }
 
+    dtHoldings.clear();
     holdings.forEach(h => {
-        const tr = document.createElement('tr');
         const totalValue = (h.quantity * h.price).toFixed(2);
-        tr.innerHTML = `
-            <td><strong>${h.spolka}</strong></td>
-            <td>${h.quantity}</td>
-            <td>${parseFloat(h.price).toFixed(2)} zł</td>
-            <td>${totalValue} zł</td>
-        `;
-        el.holdingsTableBody.appendChild(tr);
+        dtHoldings.row.add([
+            `<strong>${h.spolka}</strong>`,
+            h.quantity,
+            `${parseFloat(h.price).toFixed(2)} zł`,
+            `${totalValue} zł`
+        ]);
     });
+    dtHoldings.draw();
 }
 
 function renderTransactions(transactions) {
-    if(!el.transactionsTableBody) return;
-    el.transactionsTableBody.innerHTML = '';
-    
-    if (transactions.length === 0) {
-        el.transactionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No transactions found</td></tr>';
-        return;
+    if(!document.getElementById('transactions-table')) return;
+
+    if (!dtTransactions) {
+        dtTransactions = $('#transactions-table').DataTable({
+            pageLength: 10,
+            order: [[0, 'desc']],
+            language: { emptyTable: "No transactions found" }
+        });
     }
 
-    // Sort by date desc
-    transactions.sort((a,b) => new Date(b.data) - new Date(a.data));
-
+    dtTransactions.clear();
     transactions.forEach(t => {
-        const tr = document.createElement('tr');
         const typeClass = t.type === 'BUY' ? 'text-success' : 'text-danger';
-        tr.innerHTML = `
-            <td>${t.data}</td>
-            <td class="${typeClass}"><strong>${t.type}</strong></td>
-            <td>${t.spolka}</td>
-            <td>${t.quantity}</td>
-            <td>${parseFloat(t.price).toFixed(2)} zł</td>
-            <td><button class="btn btn-danger-text btn-sm" onclick="deleteTransaction(${t.id})">Del</button></td>
-        `;
-        el.transactionsTableBody.appendChild(tr);
+        dtTransactions.row.add([
+            t.data,
+            `<span class="${typeClass}"><strong>${t.type}</strong></span>`,
+            t.spolka,
+            t.quantity,
+            `${parseFloat(t.price).toFixed(2)} zł`,
+            `<button class="btn btn-danger-text btn-sm" onclick="deleteTransaction(${t.id})">Del</button>`
+        ]);
     });
+    dtTransactions.draw();
 }
 
 function renderDividends(dividends) {
-    if(!el.dividendsTableBody) return;
-    el.dividendsTableBody.innerHTML = '';
-    
-    if (dividends.length === 0) {
-        el.dividendsTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No dividends found</td></tr>';
-        return;
+    if(!document.getElementById('dividends-table')) return;
+
+    if (!dtDividends) {
+        dtDividends = $('#dividends-table').DataTable({
+            pageLength: 10,
+            order: [[0, 'desc']],
+            language: { emptyTable: "No dividends found" }
+        });
     }
 
-    dividends.sort((a,b) => new Date(b.data) - new Date(a.data));
-
+    dtDividends.clear();
     dividends.forEach(d => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${d.data}</td>
-            <td>${d.spolka}</td>
-            <td class="text-success">+${parseFloat(d.amount).toFixed(2)} zł</td>
-            <td><button class="btn btn-danger-text btn-sm" onclick="deleteDividend(${d.id})">Del</button></td>
-        `;
-        el.dividendsTableBody.appendChild(tr);
+        dtDividends.row.add([
+            d.data,
+            d.spolka,
+            `<span class="text-success">+${parseFloat(d.amount).toFixed(2)} zł</span>`,
+            `<button class="btn btn-danger-text btn-sm" onclick="deleteDividend(${d.id})">Del</button>`
+        ]);
     });
+    dtDividends.draw();
 }
 
 // --- Deletions ---

@@ -63,6 +63,7 @@ a:hover { color: var(--text-main); }
     font-weight: 700;
     background: linear-gradient(to right, #60a5fa, #a78bfa);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 .sidebar-header p {
@@ -318,4 +319,70 @@ a:hover { color: var(--text-main); }
 @keyframes slideIn {
     from { transform: translateX(20px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
+}
+
+/* --- DataTables Custom Styling --- */
+.dataTables_wrapper {
+    padding: 1rem;
+    color: var(--text-main);
+}
+
+.dataTables_length select, .dataTables_filter input {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.dataTables_info, .dataTables_paginate {
+    margin-top: 1rem;
+    color: var(--text-muted) !important;
+}
+
+table.dataTable {
+    border-bottom: 1px solid var(--border) !important;
+}
+
+table.dataTable thead th {
+    border-bottom: 1px solid var(--border) !important;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.5rem !important;
+}
+
+table.dataTable tbody td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 1rem 1.5rem !important;
+    background: transparent !important;
+}
+
+table.dataTable tbody tr {
+    background: transparent !important;
+}
+
+table.dataTable tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.dataTables_paginate .paginate_button {
+    color: var(--text-muted) !important;
+    border: 1px solid transparent !important;
+}
+
+.dataTables_paginate .paginate_button.current, .dataTables_paginate .paginate_button.current:hover {
+    background: var(--primary) !important;
+    color: white !important;
+    border: 1px solid var(--primary) !important;
+    border-radius: 8px !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: var(--primary) !important;
+    border: 1px solid var(--primary) !important;
+    border-radius: 8px !important;
 }
