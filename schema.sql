@@ -43,3 +43,15 @@ CREATE TABLE IF NOT EXISTS transactions (
     price REAL NOT NULL,
     FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS stock_prices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    spolka TEXT NOT NULL,
+    date DATE NOT NULL,
+    open REAL,
+    high REAL,
+    low REAL,
+    close REAL,
+    volume INTEGER,
+    UNIQUE(spolka, date)
+);

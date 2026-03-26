@@ -7,6 +7,7 @@ from functools import wraps
 from flask import Flask, request, jsonify, g
 from flask_cors import CORS
 import os
+import yfinance as yf
 
 # Configuration
 SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-change-in-prod")
@@ -183,7 +184,9 @@ def get_holdings():
     spolka = request.args.get("spolka")
 
     query = """
-        SELECT h.* FROM holdings h
+        SELECT h.*, 
+        (SELECT close FROM stock_prices sp WHERE sp.spolka = h.spolka ORDER BY date DESC LIMIT 1) as current_price
+        FROM holdings h
         JOIN accounts a ON h.account_id = a.id
         WHERE a.user_id = ?
     """
@@ -499,6 +502,89 @@ def delete_dividend(dividend_id):
     db.execute("DELETE FROM dividends WHERE id = ?", (dividend_id,))
     db.commit()
     return "", 204
+
+# ---- STOCK PRICES ----
+
+@app.route("/prices/update", methods=["POST"])
+@token_required
+def update_prices():
+    data = request.get_json() or {}
+    period = data.get("period", "1y")
+    
+    db = get_db()
+    cur = db.execute("""
+        SELECT DISTINCT h.spolka FROM holdings h
+        JOIN accounts a ON h.account_id = a.id
+        WHERE a.user_id = ?
+    """, (g.user_id,))
+    
+    tickers = [row["spolka"] for row in cur.fetchall()]
+    
+    if not tickers:
+        return jsonify({"message": "No holdings found, so no prices to update"}), 200
+        
+    updated_counts = {}
+    for ticker in tickers:
+        try:
+            ticker_obj = yf.Ticker(ticker)
+            ticker_data = ticker_obj.history(period=period)
+            
+            if ticker_data.empty:
+                continue
+                
+            count = 0
+            for date, row in ticker_data.iterrows():
+                date_str = date.strftime("%Y-%m-%d")
+                
+                open_val = float(row['Open'])
+                high_val = float(row['High'])
+                low_val = float(row['Low'])
+                close_val = float(row['Close'])
+                volume_val = int(row['Volume'])
+                
+                db.execute("""
+                    INSERT INTO stock_prices (spolka, date, open, high, low, close, volume)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(spolka, date) DO UPDATE SET
+                        open=excluded.open,
+                        high=excluded.high,
+                        low=excluded.low,
+                        close=excluded.close,
+                        volume=excluded.volume
+                """, (ticker, date_str, open_val, high_val, low_val, close_val, volume_val))
+                count += 1
+            updated_counts[ticker] = count
+            db.commit()
+        except Exception as e:
+            print(f"Error fetching data for {ticker}: {e}")
+            
+    return jsonify({"message": "Prices updated successfully", "updated_counts": updated_counts}), 200
+
+@app.route("/prices", methods=["GET"])
+@token_required
+def get_prices():
+    spolka = request.args.get("spolka")
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+    
+    query = "SELECT * FROM stock_prices WHERE 1=1"
+    params = []
+    
+    if spolka:
+        query += " AND spolka = ?"
+        params.append(spolka)
+    if start_date:
+        query += " AND date >= ?"
+        params.append(start_date)
+    if end_date:
+        query += " AND date <= ?"
+        params.append(end_date)
+        
+    query += " ORDER BY date ASC"
+    
+    cur = get_db().execute(query, params)
+    prices = [dict(row) for row in cur.fetchall()]
+    return jsonify(prices), 200
 
 # ----------------------------
 # Run

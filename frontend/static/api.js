@@ -196,12 +196,31 @@ function renderHoldings(holdings) {
 
     dtHoldings.clear();
     holdings.forEach(h => {
-        const totalValue = (h.quantity * h.price).toFixed(2);
+        let currentPriceStr = "-";
+        let plStr = "-";
+        let totalValueStr = (h.quantity * h.price).toFixed(2) + " zł"; // cost-based fallback
+
+        if (h.current_price !== null && h.current_price !== undefined) {
+            currentPriceStr = `${parseFloat(h.current_price).toFixed(2)} zł`;
+            const currentValue = h.quantity * h.current_price;
+            totalValueStr = `${currentValue.toFixed(2)} zł`;
+            
+            const cost = h.quantity * h.price;
+            const pl = currentValue - cost;
+            const plPercentage = (cost > 0) ? (pl / cost) * 100 : 0;
+            
+            const plClass = pl >= 0 ? "text-success" : "text-danger";
+            const plSign = pl > 0 ? "+" : "";
+            plStr = `<span class="${plClass}"><strong>${plSign}${pl.toFixed(2)} zł (${plSign}${plPercentage.toFixed(2)}%)</strong></span>`;
+        }
+
         dtHoldings.row.add([
             `<strong>${h.spolka}</strong>`,
             h.quantity,
-            `${parseFloat(h.price).toFixed(2)} zł`,
-            `${totalValue} zł`
+            `${parseFloat(h.price).toFixed(2)} zł`, // Avg Cost
+            currentPriceStr, // Last Price
+            totalValueStr, // Total Value (current)
+            plStr // P/L
         ]);
     });
     dtHoldings.draw();
